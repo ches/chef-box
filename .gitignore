@@ -4,3 +4,5 @@
 /iso
 *.box
 .DS_Store
+Gemfile.lock
+

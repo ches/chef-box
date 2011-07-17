@@ -4,16 +4,17 @@ require 'pathname'
 
 DIR = Pathname.new('.').expand_path
 
-# Could go away if Veewee had an unformatted version of
-# Veewee::Session.list_definitions that we could call...
 def baseboxes
-  @baseboxes ||= Dir[DIR + 'definitions/*'].map { |dir| File.basename(dir) }
+  @baseboxes ||= Dir[DIR + 'definitions/*'].inject({}) do |hash, dir|
+    basebox = File.basename(dir)
+    hash.merge(basebox.gsub(/\-chefbox/, '') => basebox)
+  end
 end
 
 namespace :box do
-  baseboxes.each do |flavor|
-    desc "Build #{flavor}"
-    task flavor do
+  baseboxes.each do |shortname, flavor|
+    desc "Build #{shortname}"
+    task shortname do
       begin sh "rm -f #{flavor}.box" ; rescue ; end
       [ :build, :export, :destroy ].each do |command|
         sh "bundle exec vagrant basebox #{command} #{flavor}"
@@ -24,7 +25,7 @@ namespace :box do
   end
 
   desc "Build all"
-  task :all => baseboxes
+  task :all => baseboxes.keys
 end
 
 desc "Download Cookbooks"

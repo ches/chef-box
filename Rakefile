@@ -29,13 +29,14 @@ end
 
 desc "Download Cookbooks"
 task :cookbooks do
-  `mkdir -p #{DIR}/cookbooks`
-  `echo '*' >> #{DIR}/cookbooks/.gitignore`
-  `[ ! -d cookbooks/apt ] && \
-git clone git@github.com:dysinger/cookbook-apt.git \
-#{DIR}/cookbooks/apt`
-  `[ ! -d cookbooks/chef ] && \
-git clone git@github.com:dysinger/cookbook-chef.git \
-#{DIR}/cookbooks/chef`
+  mkdir_p DIR + 'cookbooks'
+  chdir('cookbooks') do
+    sh "echo '*' >> .gitignore" unless File.exists?('.gitignore')
+    %w[ apt chef ].each do |ckbk|
+      unless File.directory?(ckbk)
+        sh "git clone git@github.com:dysinger/cookbook-#{ckbk}.git #{ckbk}"
+      end
+    end
+  end
 end
 

@@ -21,12 +21,14 @@ end
 Vagrant::Config.run do |config|
   config.vm.define "chef.vm" do |n|
     n.vm.host_name = "chef.vm"
+    n.vm.customize { |vm| vm.name = "chef-box server" }
     n.vm.provision :shell, :path => "scripts/chef.sh"
     config n, ipaddress
   end
   2.times do |x|
     config.vm.define "node#{x}.vm" do |n|
       n.vm.host_name = "node#{x}.vm"
+      n.vm.customize { |vm| vm.name = "chef-box node#{x}" }
       config n, ipaddress(x+20)
     end
   end

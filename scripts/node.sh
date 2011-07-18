@@ -3,7 +3,7 @@
 # chef client
 perl -p -i -e 's/localhost/172.16.172.16/g' /etc/chef/client.rb
 invoke-rc.d chef-client start
-update-rc.d chef-client defaults
+update-rc.d chef-client defaults 30 70
 
 # knife rsync
 rsync -vac --exclude="checksums" /vagrant/.chef/ /home/vagrant/.chef/

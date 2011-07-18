@@ -3,7 +3,7 @@
 # chef server
 if [ ! -f /etc/chef/client.pem ]; then
     perl -p -i -e 's/localhost/172.16.172.16/g' /etc/chef/server.rb
-    for x in rabbitmq-server couchdb chef-solr chef-expander chef-server; do
+    for x in rabbitmq-server couchdb chef-solr chef-expander; do
         update-rc.d $x defaults &
         invoke-rc.d $x start &
         wait
@@ -13,6 +13,7 @@ if [ ! -f /etc/chef/client.pem ]; then
             rabbitmqctl set_permissions -p /chef chef ".*" ".*" ".*"
         fi
     done
+    update-rc.d chef-server defaults 30 70
 fi
 
 # ssh keygen
